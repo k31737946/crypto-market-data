@@ -106,8 +106,10 @@ def evaluate(mask, outcomes, train_end, min_train=30, min_test=15):
     for side,label in [(1,"LONG"),(-1,"SHORT")]:
         r,reason=outcomes[side]
         valid=mask & np.isfinite(r)
-        tr=valid & (np.arange(len(mask))<train_end)
-        te=valid & (np.arange(len(mask))>=train_end)
+        # Purge forward-label horizon at the boundary to prevent train/test leakage.
+        idx=np.arange(len(mask))
+        tr=valid & (idx < max(0, train_end - 48))
+        te=valid & (idx >= train_end)
         a=r[tr]; b=r[te]
         if len(a)<min_train or len(b)<min_test: continue
         results[label]={"train_n":int(len(a)),"test_n":int(len(b)),
