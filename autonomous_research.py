@@ -245,7 +245,7 @@ def main():
             z["id"]=key
             z["failure_report"]=failure_report(x,z["candidate"],z["side"],outcomes,split)
             all_rows.append(z)
-        selected=[z for z in new if len(z["candidate"]["conditions"])==1][:args.top]
+        selected=[z for z in new if len(z["candidate"]["conditions"])<4][:args.top]
         print(f"  evaluated={len(new):,}; saved={len(seen):,}")
     persist(args.db,all_rows,{"files":[Path(v).name for v in paths],
       "bars":len(x),"split_index":split,"rr":args.rr,"horizon":args.horizon,
